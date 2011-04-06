@@ -1,0 +1,1367 @@
+AsciiDoc Text Formatting
+========================
+Stuart Rackham <srackham@methods.co.nz>
+:Author Initials: SJR
+:theme: bare
+
+.Import Note About This Document
+*************************************************************************
+This is a pared down version of the AsciiDoc User Guide intended to
+simplify the process of assembling new themes and evaluating existing
+themes. Please see
+http://www.methods.co.nz/asciidoc/userguide.html[the official user guide]
+for a comprehensive review of AsciiDoc features.
+*************************************************************************
+
+Text Formatting (`<h2>`)
+------------------------
+[[X51]]
+Quoted Text (`<h3>`)
+~~~~~~~~~~~~~~~~~~~~
+Words and phrases can be formatted by enclosing inline text with
+quote characters:
+
+_Emphasized text_::
+        Word phrases \'enclosed in single quote characters' (acute
+        accents) or \_underline characters_ are emphasized.
+
+*Strong text*::
+	Word phrases \*enclosed in asterisk characters* are rendered
+	in a strong font (usually bold).
+
++Monospaced text+::
+	Word phrases \`enclosed in backtick characters` (grave
+	accents) or \+plus characters+ are rendered in a monospaced font.
+
+``Quoted text''::
+        Phrases \``enclosed with two grave accents to the left and two
+        acute accents to the right\'' are rendered in quotation marks.
+
+#Unquoted text#::
+        Placing \#hashes around text# does nothing, it is a mechanism
+        to allow inline attributes to be applied to otherwise
+        unformatted text (see example below).
+
+The alternative underline and plus characters, while marginally less
+readable, are arguably a better choice than the backtick and
+apostrophe characters as they are not normally used for, and so not
+confused with, punctuation.
+
+Quoted text can be prefixed with an attribute list. Currently
+the only use made of this feature is to allow the font color,
+background color and size to be specified (XHTML/HTML only, not
+DocBook) using the first three positional attribute arguments. The
+first argument is the text color; the second the background color; the
+third is the font size. Colors are valid CSS colors and the font size
+is a number which treated as em units. Here are some examples:
+
+---------------------------------------------------------------------
+[red]#Red text#.
+[,yellow]*bold text on a yellow background*.
+[blue,#b0e0e6]+Monospaced blue text on a light blue background+
+[,,2]#Double sized text#.
+---------------------------------------------------------------------
+
+New quotes can be defined by editing asciidoc(1) configuration files.
+See the 'Configuration Files' section for details.
+
+.Quoted text properties
+- Quoting cannot be overlapped.
+- Different quoting types can be nested.
+- To suppress quoted text formatting place a backslash character
+  immediately in front of the leading quote character(s). In the case
+  of ambiguity between escaped and non-escaped text you will need to
+  escape both leading and trailing quotes, in the case of
+  multi-character quotes you may even need to escape individual
+  characters.
+- A configuration file `[quotes]` entry can be subsequently undefined
+  by setting it to a blank value.
+
+[[X52]]
+Constrained and Unconstrained Quotes (`<h4>`)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+There are actually two types of quotes:
+
+Constrained quotes (`<h5>`)
++++++++++++++++++++++++++++
+Quote text that must be bounded by white space, for example a phrase
+or a word. These are the most common type of quote and are the ones
+discussed previously.
+
+Unconstrained quotes (`<h5>`)
++++++++++++++++++++++++++++++
+Unconstrained quotes have no boundary constraints and can be placed
+anywhere within inline text. For consistency and to make them easier
+to remember unconstrained quotes are double-ups of the `_`, `*`, `+`
+and `#` constrained quotes:
+
+  __unconstrained emphasized text__
+  **unconstrained strong text**
+  ++unconstrained monospaced text++
+  ##unconstrained unquoted text##
+
+The following example emboldens the letter F:
+
+  **F**ile Open...
+
+[[X50]]
+Inline Passthroughs (`<h3>`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This special text quoting mechanism passes inline text to the output
+document without the usual substitutions. There are two flavors:
+
+\+\++Triple-plus passthrough\+\++::
+    No change is made to the quoted text, it is passed verbatim to the
+    output document.
+
+\$$Double-dollar passthrough$$::
+    Special characters are escaped but no other changes are made.
+    This passthrough can be prefixed with inline attributes.
+
+Superscripts and Subscripts (`<h3>`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Put \^carets on either^ side of the text to be superscripted, put
+\~tildes on either side~ of text to be subscripted.  For example, the
+following line:
+
+  e^{amp}#960;i^+1 = 0. H~2~O and x^10^. Some ^super text^
+  and ~some sub text~
+
+Is rendered like:
+
+e^{amp}#960;i^+1 = 0. H~2~O and x^10^. Some ^super text^
+and ~some sub text~
+
+Superscripts and subscripts are implemented as <<X52,unconstrained
+quotes>> so they can be escaped with a leading backslash and prefixed
+with with an attribute list.
+
+Line Breaks (HTML/XHTML)
+~~~~~~~~~~~~~~~~~~~~~~~~
+A plus character preceded by at least one space character at the end
+of a line forces a line break. It generates an HTML line break
+(`<br />`) tag. Line breaks are ignored when outputting to DocBook
+since it has no line break element.
+
+Rulers (HTML/XHTML)
+~~~~~~~~~~~~~~~~~~~
+A line of four or more apostrophe characters will generate an HTML
+ruler (`<hr />`) tag. Ignored when generating non-HTML output formats.
+
+Tabs
+~~~~
+By default tab characters input files will translated to 8 spaces. Tab
+expansion is set with the 'tabsize' entry in the configuration file
+`[miscellaneous]` section and can be overridden in the 'include' block macro
+by setting a 'tabsize' attribute in the macro's attribute list. For example:
+
+  include::addendum.txt[tabsize=2]
+
+The tab size can also be set using the attribute command-line option,
+for example `\--attribute=tabsize=4`
+
+Replacements
+~~~~~~~~~~~~
+The following replacements are defined in the default AsciiDoc
+configuration:
+
+  (C) copyright, (TM) trademark, (R) registered trademark,
+  -- em dash, ... ellipsis.
+
+Which are rendered as:
+
+(C) copyright, (TM) trademark, (R) registered trademark,
+-- em dash, ... ellipsis.
+
+The <<X7,Configuration Files>> section explains how to configure your
+own replacements.
+
+Special Words
+~~~~~~~~~~~~~
+Words defined in `[specialwords]` configuration file sections are
+automatically marked up without having to be explicitly notated.
+
+The <<X7,Configuration Files>> section explains how to add and replace
+special words.
+
+
+[[X17]]
+Titles
+------
+Document and section titles can be in either of two formats:
+
+Two line titles
+~~~~~~~~~~~~~~~
+A two line title consists of a title line, starting hard against the
+left margin, and an underline. Section underlines consist a repeated
+character pairs spanning the width of the preceding title (give or
+take up to three characters):
+
+The default title underlines for each of the document levels are:
+
+
+  Level 0 (top level):     ======================
+  Level 1:                 ----------------------
+  Level 2:                 ~~~~~~~~~~~~~~~~~~~~~~
+  Level 3:                 ^^^^^^^^^^^^^^^^^^^^^^
+  Level 4 (bottom level):  ++++++++++++++++++++++
+
+Examples:
+
+  Level One Section Title
+  -----------------------
+
+  Level 2 Subsection Title
+  ~~~~~~~~~~~~~~~~~~~~~~~~
+
+[[X46]]
+One line titles
+~~~~~~~~~~~~~~~
+One line titles consist of a single line delimited on either side by
+one or more equals characters (the number of equals characters
+corresponds to the section level minus one).  Here are some examples
+(levels 2 and 3 illustrate the optional trailing equals characters
+syntax):
+
+  = Document Title (level 0) =
+  == Section title (level 1) ==
+  === Section title (level 2) ===
+  ==== Section title (level 3) ====
+  ===== Section title (level 4) =====
+
+.Note
+- One or more spaces must fall between the title and the delimiters.
+- The trailing title delimiter is optional.
+- The one-line title syntax can be changed by editing the
+  configuration file `[titles]` section `sect0`...`sect4` entries.
+
+
+[[X42]]
+BlockTitles
+-----------
+A BlockTitle element is a single line beginning with a period followed
+by a title. The title is applied to the next Paragraph,
+DelimitedBlock, List, Table or BlockMacro. For example:
+
+........................
+.Notes
+- Note 1.
+- Note 2.
+........................
+
+is rendered as:
+
+.Notes
+- Note 1.
+- Note 2.
+
+
+[[X41]]
+BlockId Element
+---------------
+A 'BlockId' is a single line block element containing a unique
+identifier enclosed in double square brackets. It is used to assign an
+identifier to the ensuing block element for use by referring links. For
+example:
+
+  [[chapter-titles]]
+  Chapter titles can be ...
+
+The preceding example identifies the following paragraph so it can be
+linked from other location, for example with
+`\<<chapter-titles,chapter titles>>`.
+
+'BlockId' elements can be applied to Title, Paragraph, List,
+DelimitedBlock, Table and BlockMacro elements.  The BlockId element is
+really just an AttributeList with a special syntax which sets the
+`\{id}` attribute for substitution in the subsequent block's markup
+template.
+
+The 'BlockId' element has the same syntax and serves a similar
+function to the <<X30,anchor inline macro>>.
+
+
+Paragraphs
+----------
+Paragraphs are terminated by a blank line, the end of file, or the
+start of a DelimitedBlock.
+
+Paragraph markup is specified by configuration file `[paradef*]`
+sections.  AsciiDoc ships with the following predefined paragraph
+types:
+
+Default Paragraph
+~~~~~~~~~~~~~~~~~
+A Default paragraph (`[paradef-default]`) consists of one or more
+non-blank lines of text.  The first line must start hard against the
+left margin (no intervening white space). The processing expectation
+of the default paragraph type is that of a normal paragraph of text.
+
+The 'verse' paragraph <<X23,style>> preserves line boundaries and is
+useful for lyrics and poems.  For example:
+
+---------------------------------------------------------------------
+[verse]
+Consul *necessitatibus* per id,
+consetetur, eu pro everti postulant
+homero verear ea mea, qui.
+---------------------------------------------------------------------
+
+Renders:
+
+[verse]
+Consul *necessitatibus* per id,
+consetetur, eu pro everti postulant
+homero verear ea mea, qui.
+
+Literal Paragraph
+~~~~~~~~~~~~~~~~~
+A Literal paragraph (`[paradef-literal]`) consists of one or more
+lines of text, where the first line is indented by one or more space
+or tab characters. Literal paragraphs are rendered verbatim in a
+monospaced font usually without any distinguishing background or
+border.  There is no text formatting or substitutions within Literal
+paragraphs apart from Special Characters and Callouts.  For example:
+
+---------------------------------------------------------------------
+  Consul *necessitatibus* per id,
+  consetetur, eu pro everti postulant
+  homero verear ea mea, qui.
+---------------------------------------------------------------------
+
+Renders:
+
+  Consul *necessitatibus* per id,
+  consetetur, eu pro everti postulant
+  homero verear ea mea, qui.
+
+[[X28]]
+Admonition Paragraphs
+~~~~~~~~~~~~~~~~~~~~~
+'Tip', 'Note', 'Important', 'Warning' and 'Caution' paragraph
+definitions support the corresponding DocBook admonishment elements --
+just write a normal paragraph but place `NOTE:`, `TIP:`, `IMPORTANT:`,
+`WARNING:` or `CAUTION:` as the first word of the paragraph. For
+example:
+
+  NOTE: This is an example note.
+
+or the alternative syntax:
+
+  [NOTE]
+  This is an example note.
+
+Renders:
+
+NOTE: This is an example note.
+
+TIP: If your admonition is more than a single paragraph use an
+<<X22,admonition block>> instead.
+
+[[X47]]
+Admonition Icons and Captions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+NOTE: Admonition customization with `icons`, `iconsdir`, `icon` and
+`caption` attributes does not apply when generating DocBook output. If
+you are going the DocBook route then the <<X43,a2x(1)>> `--no-icons`
+and `--icons-dir` options can be used to set the appropriate XSL
+Stylesheets parameters.
+
+By default the asciidoc(1) `xhtml11` and `html4` backends generate
+text captions instead of icon image links. To generate links to icon
+images define the <<X45,`icons`>> attribute, for example using the `-a
+icons` command-line option.
+
+The <<X44,`iconsdir`>> attribute sets the location of linked icon
+images.
+
+You can override the default icon image using the `icon` attribute to
+specify the path of the linked image. For example:
+
+  [icon="./images/icons/wink.png"]
+  NOTE: What lovely war.
+
+Use the `caption` attribute to customize the admonition captions (not
+applicable to `docbook` backend). The following example suppresses the
+icon image and customizes the caption of a NOTE admonition (undefining
+the `icons` attribute with `icons=None` is only necessary if
+<<X45,admonition icons>> have been enabled):
+
+  [icons=None, caption="My Special Note"]
+  NOTE: This is my special note.
+
+This subsection also applies to <<X22,Admonition Blocks>>.
+
+
+Delimited Blocks
+----------------
+Delimited blocks are blocks of text enveloped by leading and trailing
+delimiter lines (normally a series of four or more repeated
+characters). The behavior of Delimited Blocks is specified by entries
+in configuration file `[blockdef*]` sections.
+
+Predefined Delimited Blocks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+AsciiDoc ships with a number of predefined DelimitedBlocks (see the
+`asciidoc.conf` configuration file in the asciidoc(1) program
+directory):
+
+Predefined delimited block underlines:
+
+  CommentBlock:     //////////////////////////
+  PassthroughBlock: ++++++++++++++++++++++++++
+  ListingBlock:     --------------------------
+  LiteralBlock:     ..........................
+  SidebarBlock:     **************************
+  QuoteBlock:       __________________________
+  ExampleBlock:     ==========================
+  Filter blocks:    code~~~~~~~~~~~~~~~~~~~~~~
+                    source~~~~~~~~~~~~~~~~~~~~
+                    music~~~~~~~~~~~~~~~~~~~~~
+
+The <<X56,code>>, <<X57,source>> and <<X58,music>> filter blocks are
+detailed in the <<X59,Filters>> section.
+
+.Default DelimitedBlock substitutions
+`-------------.------------.---------.---------.---------.---------
+	      Passthrough  Listing   Literal   Sidebar   Quote
+-------------------------------------------------------------------
+Callouts        No          Yes       Yes       No        No
+Attributes      Yes         No        No        Yes       Yes
+Inline Macros   Yes         No        No        Yes       Yes
+Quotes          No          No        No        Yes       Yes
+Replacements    No          No        No        Yes       Yes
+Special chars   No          Yes       Yes       Yes       Yes
+Special words   No          No        No        Yes       Yes
+-------------------------------------------------------------------
+
+Listing Blocks
+~~~~~~~~~~~~~~
+ListingBlocks are rendered verbatim in a monospaced font, they retain
+line and whitespace formatting and often distinguished by a background
+or border. There is no text formatting or substitutions within Listing
+blocks apart from Special Characters and Callouts. Listing blocks are
+often used for code and file listings.
+
+Here's an example:
+
+  --------------------------------------
+  #include <stdio.h>
+
+  int main() {
+	  printf("Hello World!\n");
+	  exit(0);
+  }
+  --------------------------------------
+
+Which will be rendered like:
+
+--------------------------------------
+#include <stdio.h>
+
+int main() {
+	printf("Hello World!\n");
+	exit(0);
+}
+--------------------------------------
+
+Literal Blocks
+~~~~~~~~~~~~~~
+LiteralBlocks behave just like LiteralParagraphs except you don't have
+to indent the contents.
+
+LiteralBlocks can be used to resolve list ambiguity. If the following
+list was just indented it would be processed as an ordered list (not
+an indented paragraph):
+
+---------------------------------------------------------------------
+....................
+1. Item 1
+2. Item 2
+....................
+---------------------------------------------------------------------
+
+Renders:
+....................
+1. Item 1
+2. Item 2
+....................
+
+The literal block has a 'verse' <<X23,style>> (useful for lyrics and
+poems). For example:
+
+---------------------------------------------------------------------
+[verse]
+......................................
+Consul *necessitatibus* per id,
+consetetur, eu pro everti postulant
+homero verear ea mea, qui.
+
+Qui in magna commodo, est labitur
+dolorum an. Est ne *magna primis
+adolescens*.
+......................................
+---------------------------------------------------------------------
+
+Renders:
+
+[verse]
+......................................
+Consul *necessitatibus* per id,
+consetetur, eu pro everti postulant
+homero verear ea mea, qui.
+
+Qui in magna commodo, est labitur
+dolorum an. Est ne *magna primis
+adolescens*.
+......................................
+
+SidebarBlocks
+~~~~~~~~~~~~~
+A sidebar is a short piece of text presented outside the narrative
+flow of the main text. The sidebar is normally presented inside a
+bordered box to set it apart from the main text.
+
+The sidebar body is treated like a normal section body.
+
+Here's an example:
+
+---------------------------------------------------------------------
+.An Example Sidebar
+************************************************
+Any AsciiDoc SectionBody element (apart from
+SidebarBlocks) can be placed inside a sidebar.
+************************************************
+---------------------------------------------------------------------
+
+Which will be rendered like:
+
+.An Example Sidebar
+************************************************
+Any AsciiDoc SectionBody element (apart from
+SidebarBlocks) can be placed inside a sidebar.
+************************************************
+
+[[X26]]
+Comment Blocks
+~~~~~~~~~~~~~~
+The contents of CommentBlocks are not processed; they are useful for
+annotations and for excluding new or outdated content that you don't
+want displayed.  Here's and example:
+
+---------------------------------------------------------------------
+//////////////////////////////////////////
+CommentBlock contents are not processed by
+asciidoc(1).
+//////////////////////////////////////////
+---------------------------------------------------------------------
+
+See also <<X25,Comment Lines>>.
+
+Passthrough Blocks
+~~~~~~~~~~~~~~~~~~
+PassthroughBlocks are for backend specific markup, text is only
+subject to attribute and macro substitution.  PassthroughBlock content
+will generally be backend specific. Here's an example:
+
+---------------------------------------------------------------------
+++++++++++++++++++++++++++++++++++++++
+<table border="1"><tr>
+  <td>Cell 1</td>
+  <td>Cell 2</td>
+</tr></table>
+++++++++++++++++++++++++++++++++++++++
+---------------------------------------------------------------------
+
+Quote Blocks
+~~~~~~~~~~~~
+QuoteBlocks are used for quoted passages of text. 'attribution' and
+'citetitle' named attributes specify the author and source of the
+quote (they are equivalent to positional attribute list entries 1 and
+2 respectively).  Both attributes are optional and the block body is
+treated like a SectionBody. For example:
+
+---------------------------------------------------------------------
+[Bertrand Russell, The World of Mathematics (1956)]
+____________________________________________________________________
+A good notation has subtlety and suggestiveness which at times makes
+it almost seem like a live teacher.
+____________________________________________________________________
+---------------------------------------------------------------------
+
+Which is rendered as:
+
+[Bertrand Russell, The World of Mathematics (1956)]
+____________________________________________________________________
+A good notation has subtlety and suggestiveness which at times makes
+it almost seem like a live teacher.
+____________________________________________________________________
+
+In this example unquoted positional attributes have been used, the
+following quoted positional and named attributes are equivalent (if
+the attribute list contained commas then quoting would have been
+mandatory):
+
+  ["Bertrand Russell","The World of Mathematics (1956)"]
+  [attribution="Bertrand Russell",citetitle="The World of Mathematics (1956)"]
+
+You can render poems and lyrics with a combination of Quote and
+Literal blocks. For example:
+
+---------------------------------------------------------------------
+[William Blake,from Auguries of Innocence]
+_____________________________________________________________________
+[verse]
+.....................................................................
+To see a world in a grain of sand,
+And a heaven in a wild flower,
+Hold infinity in the palm of your hand,
+And eternity in an hour.
+.....................................................................
+_____________________________________________________________________
+---------------------------------------------------------------------
+
+Which is rendered as:
+
+[William Blake,from Auguries of Innocence]
+_____________________________________________________________________
+[verse]
+.....................................................................
+To see a world in a grain of sand,
+And a heaven in a wild flower,
+Hold infinity in the palm of your hand,
+And eternity in an hour.
+.....................................................................
+_____________________________________________________________________
+
+[[X48]]
+Example Blocks
+~~~~~~~~~~~~~~
+ExampleBlocks encapsulate the DocBook Example element and are used
+for, well, examples.  Example blocks can be titled by preceding them
+with a 'BlockTitle'.  DocBook toolchains normally number examples and
+generate a 'List of Examples' backmatter section.
+
+Example blocks are delimited by lines of equals characters and you can
+put any block elements apart from Titles, BlockTitles and Sidebars)
+inside an example block. For example:
+
+---------------------------------------------------------------------
+.An example
+=====================================================================
+Qui in magna commodo, est labitur dolorum an. Est ne magna primis
+adolescens.
+=====================================================================
+---------------------------------------------------------------------
+
+Renders:
+
+.An example
+=====================================================================
+Qui in magna commodo, est labitur dolorum an. Est ne magna primis
+adolescens.
+=====================================================================
+
+The title prefix that is automatically inserted by asciidoc(1) can be
+customized with the `caption` attribute (`xhtml11` and `html4`
+backends). For example
+
+---------------------------------------------------------------------
+[caption="Example 1: "]
+.An example with a custom caption
+=====================================================================
+Qui in magna commodo, est labitur dolorum an. Est ne magna primis
+adolescens.
+=====================================================================
+---------------------------------------------------------------------
+
+[[X22]]
+Admonition Blocks
+~~~~~~~~~~~~~~~~~
+The ExampleBlock definition includes a set of admonition
+<<X23,styles>> (NOTE, TIP, IMPORTANT, WARNING, CAUTION) for generating
+admonition blocks (admonitions containing more than just a
+<<X28,simple paragraph>>).  Just precede the ExampleBlock with an
+attribute list containing the admonition style name. For example:
+
+---------------------------------------------------------------------
+[NOTE]
+.A NOTE block
+=====================================================================
+Qui in magna commodo, est labitur dolorum an. Est ne magna primis
+adolescens.
+
+. Fusce euismod commodo velit.
+. Vivamus fringilla mi eu lacus.
+  .. Fusce euismod commodo velit.
+  .. Vivamus fringilla mi eu lacus.
+. Donec eget arcu bibendum
+  nunc consequat lobortis.
+=====================================================================
+---------------------------------------------------------------------
+
+Renders:
+
+[NOTE]
+.A NOTE block
+=====================================================================
+Qui in magna commodo, est labitur dolorum an. Est ne magna primis
+adolescens.
+
+. Fusce euismod commodo velit.
+. Vivamus fringilla mi eu lacus.
+  .. Fusce euismod commodo velit.
+  .. Vivamus fringilla mi eu lacus.
+. Donec eget arcu bibendum
+  nunc consequat lobortis.
+=====================================================================
+
+See also <<X47,Admonition Icons and Captions>>.
+
+
+Lists
+-----
+.List types
+- Bulleted lists. Also known as itemized or unordered lists.
+- Numbered lists. Also called ordered lists.
+- Labeled lists. Sometimes called variable or definition lists.
+- Callout lists (a list of callout annotations).
+
+.List behavior
+- Indentation is optional and does not determine nesting, indentation
+  does however make the source more readable.
+- A nested list must use a different syntax from its parent so that
+  asciidoc(1) can distinguish the start of a nested list.
+- By default lists of the same type can only be nested two deep; this
+  could be increased by defining new list definitions.
+- In addition to nested lists a list item will include immediately
+  following Literal paragraphs.
+- Use <<X15, List Item Continuation>> to include other block elements
+  in a list item.
+- The `listindex` <<X60,intrinsic attribute>> is the current list item
+  index (1..). If this attribute is not inside a list then it's value
+  is the number of items in the most recently closed list. Useful for
+  displaying the number of items in a list.
+
+Bulleted and Numbered Lists
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Bulleted list items start with a dash or an asterisk followed by a
+space or tab character. Bulleted list syntaxes are:
+
+...................
+- List item.
+* List item.
+...................
+
+Numbered list items start with an optional number or letter followed
+by a period followed by a space or tab character.  List numbering is
+optional. Numbered list syntaxes are:
+.....................................................................
+.  Integer numbered list item.
+1. Integer numbered list item with optional numbering.
+.. Lowercase letter numbered list item.
+a. Lowercase letter numbered list item with optional numbering.
+.....................................................................
+
+Here are some examples:
+---------------------------------------------------------------------
+- Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+  * Fusce euismod commodo velit.
+  * Qui in magna commodo, est labitur dolorum an. Est ne magna primis
+    adolescens. Sit munere ponderum dignissim et. Minim luptatum et
+    vel.
+  * Vivamus fringilla mi eu lacus.
+  * Donec eget arcu bibendum nunc consequat lobortis.
+- Nulla porttitor vulputate libero.
+  . Fusce euismod commodo velit.
+  . Vivamus fringilla mi eu lacus.
+    .. Fusce euismod commodo velit.
+    .. Vivamus fringilla mi eu lacus.
+  . Donec eget arcu bibendum nunc consequat lobortis.
+- Praesent eget purus quis magna eleifend eleifend.
+  1. Fusce euismod commodo velit.
+    a. Fusce euismod commodo velit.
+    b. Vivamus fringilla mi eu lacus.
+    c. Donec eget arcu bibendum nunc consequat lobortis.
+  2. Vivamus fringilla mi eu lacus.
+  3. Donec eget arcu bibendum nunc consequat lobortis.
+  4. Nam fermentum mattis ante.
+---------------------------------------------------------------------
+
+Which render as:
+
+- Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+  * Fusce euismod commodo velit.
+  * Qui in magna commodo, est labitur dolorum an. Est ne magna primis
+    adolescens. Sit munere ponderum dignissim et. Minim luptatum et
+    vel.
+  * Vivamus fringilla mi eu lacus.
+  * Donec eget arcu bibendum nunc consequat lobortis.
+- Nulla porttitor vulputate libero.
+  . Fusce euismod commodo velit.
+  . Vivamus fringilla mi eu lacus.
+    .. Fusce euismod commodo velit.
+    .. Vivamus fringilla mi eu lacus.
+  . Donec eget arcu bibendum nunc consequat lobortis.
+- Praesent eget purus quis magna eleifend eleifend.
+  1. Fusce euismod commodo velit.
+    a. Fusce euismod commodo velit.
+    b. Vivamus fringilla mi eu lacus.
+    c. Donec eget arcu bibendum nunc consequat lobortis.
+  2. Vivamus fringilla mi eu lacus.
+  3. Donec eget arcu bibendum nunc consequat lobortis.
+  4. Nam fermentum mattis ante.
+
+Vertical Labeled Lists
+~~~~~~~~~~~~~~~~~~~~~~
+Labeled list items consist of one or more text labels followed the
+text of the list item.
+
+An item label begins a line with an alphanumeric character hard
+against the left margin and ends with a double colon `::` or
+semi-colon `;;`.
+
+The list item text consists of one or more lines of text starting on
+the line immediately following the label and can be followed by nested
+List or ListParagraph elements. Item text can be optionally indented.
+
+Here are some examples:
+---------------------------------------------------------------------
+Lorem::
+  Fusce euismod commodo velit.
+
+  Fusce euismod commodo velit.
+
+Ipsum::
+  Vivamus fringilla mi eu lacus.
+  * Vivamus fringilla mi eu lacus.
+  * Donec eget arcu bibendum nunc consequat lobortis.
+Dolor::
+  Donec eget arcu bibendum nunc consequat lobortis.
+  Suspendisse;;
+    A massa id sem aliquam auctor.
+  Morbi;;
+    Pretium nulla vel lorem.
+  In;;
+    Dictum mauris in urna.
+---------------------------------------------------------------------
+
+Which render as:
+
+Lorem::
+  Fusce euismod commodo velit.
+
+  Fusce euismod commodo velit.
+
+Ipsum::
+  Vivamus fringilla mi eu lacus.
+  * Vivamus fringilla mi eu lacus.
+  * Donec eget arcu bibendum nunc consequat lobortis.
+Dolor::
+  Donec eget arcu bibendum nunc consequat lobortis.
+  Suspendisse;;
+    A massa id sem aliquam auctor.
+  Morbi;;
+    Pretium nulla vel lorem.
+  In;;
+    Dictum mauris in urna.
+
+Horizontal Labeled Lists
+~~~~~~~~~~~~~~~~~~~~~~~~
+Horizontal labeled lists differ from vertical labeled lists in that
+the label and the list item sit side-by-side as opposed to the item
+under the label. Item text must begin on the same line as the label
+although you can begin item text on the next line if you follow the
+label with a backslash.
+
+The following horizontal list example also illustrates the omission
+of optional indentation:
+
+---------------------------------------------------------------------
+*Lorem*:: Fusce euismod commodo velit.  Qui in magna commodo, est
+labitur dolorum an. Est ne magna primis adolescens.
+
+  Fusce euismod commodo velit.
+
+*Ipsum*:: Vivamus fringilla mi eu lacus.
+- Vivamus fringilla mi eu lacus.
+- Donec eget arcu bibendum nunc consequat lobortis.
+
+*Dolor*:: \
+  - Vivamus fringilla mi eu lacus.
+  - Donec eget arcu bibendum nunc consequat lobortis.
+
+---------------------------------------------------------------------
+
+Which render as:
+
+*Lorem*:: Fusce euismod commodo velit.  Qui in magna commodo, est
+labitur dolorum an. Est ne magna primis adolescens.
+
+  Fusce euismod commodo velit.
+
+*Ipsum*:: Vivamus fringilla mi eu lacus.
+- Vivamus fringilla mi eu lacus.
+- Donec eget arcu bibendum nunc consequat lobortis.
+
+*Dolor*:: \
+  - Vivamus fringilla mi eu lacus.
+  - Donec eget arcu bibendum nunc consequat lobortis.
+
+[WARNING]
+=====================================================================
+- Use vertical labeled lists in preference to horizontal labeled lists
+  -- current PDF toolchains do not make a good job of determining
+  the relative column widths.
+- If you are generating DocBook markup the horizontal labeled lists
+  should not be nested because the 'DocBook XML V4.2' DTD does not
+  permit nested informal tables (although <<X13,DocBook XSL
+  Stylesheets>> process them correctly).
+=====================================================================
+
+Question and Answer Lists
+~~~~~~~~~~~~~~~~~~~~~~~~~
+AsciiDoc comes pre-configured with a labeled list for generating
+DocBook question and answer (Q&A) lists (`??` label delimiter).
+Example:
+
+---------------------------------------------------------------------
+Question one??
+        Answer one.
+Question two??
+        Answer two.
+---------------------------------------------------------------------
+
+Renders:
+
+Question one??
+        Answer one.
+Question two??
+        Answer two.
+
+Glossary Lists
+~~~~~~~~~~~~~~
+AsciiDoc comes pre-configured with a labeled list (`:-` label
+delimiter) for generating DocBook glossary lists. Example:
+
+---------------------------------------------------------------------
+A glossary term:-
+    The corresponding definition.
+A second glossary term:-
+    The corresponding definition.
+---------------------------------------------------------------------
+
+For working examples see the `article.txt` and `book.txt` documents in
+the AsciiDoc `./doc` distribution directory.
+
+NOTE: To generate valid DocBook output glossary lists must be located
+in a glossary section.
+
+Bibliography Lists
+~~~~~~~~~~~~~~~~~~
+AsciiDoc comes with a predefined itemized list (`+` item bullet) for
+generating bibliography entries.  Example:
+
+---------------------------------------------------------------------
++ [[[taoup]]] Eric Steven Raymond. 'The Art of UNIX
+  Programming'. Addison-Wesley. ISBN 0-13-142901-9.
++ [[[walsh-muellner]]] Norman Walsh & Leonard Muellner.
+  'DocBook - The Definitive Guide'. O'Reilly & Associates.
+  1999. ISBN 1-56592-580-7.
+---------------------------------------------------------------------
+
+The `[[[<reference>]]]` syntax is a bibliography entry anchor, it
+generates an anchor named `<reference>` and additionally displays
+`[<reference>]` at the anchor position. For example `[\[[taoup]]]`
+generates an anchor named `taoup` that displays `[taoup]` at the
+anchor position. Cite the reference from elsewhere your document using
+`\<<taoup>>`, this displays a hyperlink (`[taoup]`) to the
+corresponding bibliography entry anchor.
+
+For working examples see the `article.txt` and `book.txt` documents in
+the AsciiDoc `./doc` distribution directory.
+
+NOTE: To generate valid DocBook output bibliography lists must be
+located in a bibliography section.
+
+[[X15]]
+List Item Continuation
+~~~~~~~~~~~~~~~~~~~~~~
+To include subsequent block elements in list items (in addition to
+implicitly included nested lists and Literal paragraphs) place a
+separator line containing a single plus character between the list
+item and the ensuing list continuation element.  Multiple block
+elements (excluding section Titles and BlockTitles) may be included in
+a list item using this technique.  For example:
+
+Here's an example of list item continuation:
+
+---------------------------------------------------------------------
+1. List item one.
++
+List item one continued with a second paragraph followed by an
+Indented block.
++
+.................
+$ ls *.sh
+$ mv *.sh ~/tmp
+.................
++
+List item one continued with a third paragraph.
+
+2. List item two.
+
+   List item two literal paragraph (no continuation required).
+
+-  Nested list (item one).
+
+   Nested list literal paragraph (no continuation required).
++
+Nested list appended list item one paragraph
+
+-  Nested list item two.
+---------------------------------------------------------------------
+
+Renders:
+
+1. List item one.
++
+List item one continued with a second paragraph followed by a Listing
+block.
++
+.................
+$ ls *.sh
+$ mv *.sh ~/tmp
+.................
++
+List item one continued with a third paragraph.
+
+2. List item two.
+
+   List item two literal paragraph (no continuation required).
+
+-  Nested list (item one).
+
+   Nested list literal paragraph (no continuation required).
++
+Nested list appended list item one paragraph
+
+-  Nested list item two.
+
+
+[[X29]]
+List Block
+~~~~~~~~~~
+A List block is a special delimited block containing a list element.
+
+- All elements between in the List Block are part of the preceding
+  list item.  In this respect the List block behaves like <<X15,List
+  Item Continuation>> except that list items contained within the
+  block do not require explicit `+` list item continuation lines:
+- The block delimiter is a single line containing two dashes.
+- Any block title or attributes are passed to the first element inside
+  the block.
+
+The List Block is useful for:
+
+1. Lists with long multi-element list items.
+2. Nesting a list within a parent list item (by default nested lists
+   follow the preceding list item).
+
+Here's an example of a nested list block:
+
+---------------------------------------------------------------------
+.Nested List Block
+1. List item one.
++
+This paragraph is part of the preceding list item
++
+--
+a. This list is nested and does not require explicit item continuation.
+
+This paragraph is part of the preceding list item
+
+b. List item b.
+
+This paragraph belongs to list item b.
+--
++
+This paragraph belongs to item 1.
+
+2. Item 2 of the outer list.
+---------------------------------------------------------------------
+
+Renders:
+
+.Nested List Block
+1. List item one.
++
+This paragraph is part of the preceding list item
++
+--
+a. This list is nested and does not require explicit item continuation.
+
+This paragraph is part of the preceding list item
+
+b. List item b.
+
+This paragraph belongs to list item b.
+--
++
+This paragraph belongs to item 1.
+
+2. Item 2 of the outer list.
+
+
+Footnotes
+---------
+The shipped AsciiDoc configuration includes the `\footnote:[<text>]`
+inline macro for generating footnotes. The footnote text can span
+multiple lines. Example footnote:
+
+  A footnote footnote:[An example footnote.]
+
+Which renders:
+
+A footnote footnote:[An example footnote.]
+
+Footnotes are primarily useful when generating DocBook output --
+DocBook conversion programs render footnote outside the primary text
+flow.
+
+
+Indexes
+-------
+The shipped AsciiDoc configuration includes the inline macros for
+generating document index entries.
+
+`\indexterm:[<primary>,<secondary>,<tertiary>]`::
+`\(((<primary>,<secondary>,<tertiary>)))`::
+    This inline macro generates an index term (the <secondary> and
+    <tertiary> attributes are optional). For example
+    `\indexterm:[Tigers,Big cats]` (or, using the alternative syntax
+    `\(((Tigers,Big cats)))`.  Index terms that have secondary and
+    tertiary entries also generate separate index terms for the
+    secondary and tertiary entries. The index terms appear in the
+    index, not the primary text flow.
+
+`\indexterm2:[<primary>]`::
+`\((<primary>))`::
+    This inline macro generates an index term that appears in both the
+    index and the primary text flow.  The `<primary>` should not be
+    padded to the left or right with white space characters.
+
+For working examples see the `article.txt` and `book.txt` documents in
+the AsciiDoc `./doc` distribution directory.
+
+NOTE: Index entries only really make sense if you are generating
+DocBook markup -- DocBook conversion programs automatically generate
+an index at the point an 'Index' section appears in source document.
+
+
+Callouts
+--------
+Callouts are a mechanism for annotating verbatim text (source code,
+computer output and user input for example). Callout markers are
+placed inside the annotated text while the actual annotations are
+presented in a callout list after the annotated text. Here's an
+example:
+
+---------------------------------------------------------------------
+.MS-DOS directory listing
+.....................................................
+10/17/97   9:04         <DIR>    bin
+10/16/97  14:11         <DIR>    DOS            \<1>
+10/16/97  14:40         <DIR>    Program Files
+10/16/97  14:46         <DIR>    TEMP
+10/17/97   9:04         <DIR>    tmp
+10/16/97  14:37         <DIR>    WINNT
+10/16/97  14:25             119  AUTOEXEC.BAT   \<2>
+ 2/13/94   6:21          54,619  COMMAND.COM    \<2>
+10/16/97  14:25             115  CONFIG.SYS     \<2>
+11/16/97  17:17      61,865,984  pagefile.sys
+ 2/13/94   6:21           9,349  WINA20.386     \<3>
+.....................................................
+
+\<1> This directory holds MS-DOS.
+\<2> System startup code for DOS.
+\<3> Some sort of Windows 3.1 hack.
+---------------------------------------------------------------------
+
+Which renders:
+
+.MS-DOS directory listing
+.....................................................................
+10/17/97   9:04         <DIR>    bin
+10/16/97  14:11         <DIR>    DOS            <1>
+10/16/97  14:40         <DIR>    Program Files
+10/16/97  14:46         <DIR>    TEMP
+10/17/97   9:04         <DIR>    tmp
+10/16/97  14:37         <DIR>    WINNT
+10/16/97  14:25             119  AUTOEXEC.BAT   <2>
+ 2/13/94   6:21          54,619  COMMAND.COM    <2>
+10/16/97  14:25             115  CONFIG.SYS     <2>
+11/16/97  17:17      61,865,984  pagefile.sys
+ 2/13/94   6:21           9,349  WINA20.386     <3>
+.....................................................................
+
+<1> This directory holds MS-DOS.
+<2> System startup code for DOS.
+<3> Some sort of Windows 3.1 hack.
+
+.Explanation
+- The callout marks are whole numbers enclosed in angle brackets that
+  refer to an item index in the following callout list.
+- By default callout marks are confined to LiteralParagraphs,
+  LiteralBlocks and ListingBlocks (although this is a configuration
+  file option and can be changed).
+- Callout list item numbering is fairly relaxed -- list items can
+  start with `<n>`, `n>` or `>` where `n` is the optional list item
+  number (in the latter case list items starting with a single `>`
+  character are implicitly numbered starting at one).
+- Callout lists should not be nested -- start list items hard against
+  the left margin.
+- If you want to present a number inside angle brackets you'll need to
+  escape it with a backslash to prevent it being interpreted as a
+  callout mark.
+
+Implementation Notes
+~~~~~~~~~~~~~~~~~~~~
+Callout marks are generated by the 'callout' inline macro while
+callout lists are generated using the 'callout' list definition. The
+'callout' macro and 'callout' list are special in that they work
+together. The 'callout' inline macro is not enabled by the normal
+'macros' substitutions option, instead it has its own 'callouts'
+substitution option.
+
+The following attributes are available during inline callout macro
+substitution:
+
+`\{index}`::
+    The callout list item index inside the angle brackets.
+`\{coid}`::
+    An identifier formatted like `CO<listnumber>-<index>` that
+    uniquely identifies the callout mark. For example `CO2-4`
+    identifies the fourth callout mark in the second set of callout
+    marks.
+
+The `\{coids}` attribute can be used during callout list item
+substitution -- it is a space delimited list of callout IDs that refer
+to the explanatory list item.
+
+Tables
+------
+Tables are the most complex AsciiDoc elements and this section is
+quite long. footnote:[The current table syntax is overly complicated
+and unwieldy to edit, hopefully a more usable syntax will appear in
+future versions of AsciiDoc.]
+
+NOTE: AsciiDoc generates nice HTML tables, but the current crop of
+DocBook toolchains render tables with varying degrees of success. Use
+tables only when really necessary.
+
+The following annotated examples are all you'll need to start creating
+your own tables.
+
+The only non-obvious thing you'll need to remember are the column stop
+characters:
+
+- Backtick (`) -- align left.
+- Single quote (') -- align right.
+- Period (.) -- align center.
+
+Simple table:
+
+---------------------------------------------------------------------
+ `---`---
+ 1   2
+ 3   4
+ 5   6
+ --------
+---------------------------------------------------------------------
+
+Output:
+
+`---`---
+1   2
+3   4
+5   6
+--------
+
+Table with title, header and footer:
+
+---------------------------------------------------------------------
+ .An example table
+ [grid="all"]
+ '---------.--------------
+ Column 1   Column 2
+ -------------------------
+ 1          Item 1
+ 2          Item 2
+ 3          Item 3
+ -------------------------
+ 6          Three items
+ -------------------------
+---------------------------------------------------------------------
+
+Output:
+
+.An example table
+[grid="all"]
+`-----------.--------------
+Column 1     Column 2
+---------------------------
+1            Item 1
+2            Item 2
+3            Item 3
+---------------------------
+6            Three items
+---------------------------
+
+Four columns totaling 15% of the 'pagewidth', CSV data:
+
+---------------------------------------------------------------------
+[frame="all"]
+````~15
+1,2,3,4
+a,b,c,d
+A,B,C,D
+~~~~~~~~
+---------------------------------------------------------------------
+
+Output:
+
+[frame="all"]
+````~15
+1,2,3,4
+a,b,c,d
+A,B,C,D
+~~~~~~~~
+
+A table with a numeric ruler and externally sourced CSV data:
+
+---------------------------------------------------------------------
+ [frame="all", grid="all"]
+ .15`20`25`20`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ID,Customer Name,Contact Name,Customer Address,Phone
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ include::customers.csv[]
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------------------------------------
+
+Renders:
+
+[frame="all", grid="all"]
+.15`20`25`20`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ID,Customer Name,Contact Name,Customer Address,Phone
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AROUT","Around the Horn","Thomas Hardy","120 Hanover Sq.  London","(171) 555-7788"
+"BERGS","Berglunds snabbkop","Christina Berglund","Berguvsvagen  8 Lulea","0921-12 34 65"
+"BLAUS","Blauer See Delikatessen","Hanna Moos","Forsterstr. 57 Mannheim","0621-08460"
+"BLONP","Blondel pere et fils","Frederique Citeaux","24, place Kleber Strasbourg","88.60.15.31"
+"BOLID","Bolido Comidas preparadas","Martin Sommer","C/ Araquil, 67 Madrid","(91) 555 22 82"
+"BONAP","Bon app'","Laurence Lebihan","12, rue des Bouchers Marseille","91.24.45.40"
+"BOTTM","Bottom-Dollar Markets","Elizabeth Lincoln","23 Tsawassen Blvd.  Tsawassen","(604) 555-4729"
+"BSBEV","B's Beverages","Victoria Ashworth","Fauntleroy Circus London","(171) 555-1212"
+"CACTU","Cactus Comidas para llevar","Patricio Simpson","Cerrito 333 Buenos Aires","(1) 135-5555"
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
